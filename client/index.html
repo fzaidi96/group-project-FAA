@@ -11,19 +11,25 @@
     <header>
       <img src="" alt="logo" class="logo" />
       <form id="searchForm">
+
         <input type="search" name="query" id="" placeholder="search for images..."/>
+
         <button id="submitSearch">search</button>
       </form>
-      <form id="userSelect">
-        <input type="dropdown">
+      <form id="addUser">
+        <input type="text" name="user" id="addUserTxt" placeholder="user" />
+        <button type="submit">+</button>
       </form>
+      <label for="userDropdown">User:</label>
+      <select id="userDropdown" name="dropdown">
+        <!-- <option value="option1">Option 1</option> -->
+      </select>
       <div id="userAreaBtn">
-        <img src="" alt="user area button">
+        <img src="" alt="user area button" />
       </div>
     </header>
     <main>
-        <div id="mainFeed">
-        </div>
+      <div id="mainFeed"></div>
     </main>
   </body>
 </html>
