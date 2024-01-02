@@ -20,3 +20,18 @@ function populateUserList(entry) {
   });
 }
 //############### END of dropdown functions ###########
+
+// ############# Add user function ###########
+const userForm = document.getElementById("addUser");
+
+userForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const formData = new FormData(userForm);
+  const formVal = Object.fromEntries(formData);
+  console.log(formVal);
+  const res = await fetch("http://localhost:3333/users", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(formVal),
+  });
+});
