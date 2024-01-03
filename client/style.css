@@ -16,3 +16,13 @@
   position: relative;
   width: 1000px;
 }
+.thumbnail-img {
+  height: 250px;
+  width: 250px;
+}
+.mainImage {
+  width: 800px;
+  height: 800px;
+  background-image: none;
+  background-color: orange;
+}

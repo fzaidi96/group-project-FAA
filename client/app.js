@@ -21,73 +21,72 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("Initially Selected User ID:", selectedUserId);
 });
 //above function feeds the 'data' field (an array of usernames) into the below function. The function then creates the options for the dropdown menu, with the value = users ID. This can be referenced later.
-  
-  async function popUserList() {
-    const response = await fetch("http://localhost:3333/users");
-    const user = await response.json();
-    const userDropDown = document.getElementById("userDropdown");
-  
-  // for each user in the database, we create a name in the dropdown 
-    user.forEach(function (user) {
-      const optionElement = document.createElement("option");
 
-    // then populate the options with the matching username from the database 
-      optionElement.textContent = user.username;
-      optionElement.value = user.id
-  
-   // and apend them to the dropdown
-      userDropdown.appendChild(optionElement);
+async function popUserList() {
+  const response = await fetch("http://localhost:3333/users");
+  const user = await response.json();
+  const userDropDown = document.getElementById("userDropdown");
+
+  // for each user in the database, we create a name in the dropdown
+  user.forEach(function (user) {
+    const optionElement = document.createElement("option");
+
+    // then populate the options with the matching username from the database
+    optionElement.textContent = user.username;
+    optionElement.value = user.id;
+
+    // and apend them to the dropdown
+    userDropdown.appendChild(optionElement);
   });
-  };
+}
 
-
-  // ############# Add user function and automatically populate user list###########
-  const userForm = document.getElementById("addUser");
-  userForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
-    const formData = new FormData(userForm);
-    const formVal = Object.fromEntries(formData);
-    const response = await fetch("http://localhost:3333/users", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(formVal),
-    });
-    const json = await response.json();
-    const userDropDown = document.getElementById("userDropdown");
-      userDropDown.innerHTML = ""
-      
-      popUserList();
+// ############# Add user function and automatically populate user list###########
+const userForm = document.getElementById("addUser");
+userForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const formData = new FormData(userForm);
+  const formVal = Object.fromEntries(formData);
+  const response = await fetch("http://localhost:3333/users", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(formVal),
   });
+  const json = await response.json();
+  const userDropDown = document.getElementById("userDropdown");
+  userDropDown.innerHTML = "";
+
+  popUserList();
+});
 
 //when user clicks submit, the function calls the getImages() function with the search term (passed through function as userQuery). Then getImages makes an fetch call
 const form = document.getElementById("searchForm");
-form.addEventListener("submit", async function(event){
-    event.preventDefault();
-    const userQuery = event.target.query.value;
-    console.log(userQuery);
-    //make API call with the user's query
-    getImages(userQuery);
+form.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const userQuery = event.target.query.value;
+  console.log(userQuery);
+  //make API call with the user's query
+  getImages(userQuery);
 });
 
 // make API call to unsplash to get images
 async function getImages(query) {
+  //fetch data from unsplash
+  const response = await fetch(
+    `https://api.unsplash.com/search/photos?query=${query}&client_id=mGrCIgBZNFz0VK6M5r0Ku0ZuqH07Q3OfjhdbYqQWXwo`
+  );
+  //turn response into JSON
+  const json = await response.json();
+  //call renderImages to show them on page
+  renderImages(json.results);
+}
 
-
-      //fetch data from unsplash
-    const response = await fetch (`https://api.unsplash.com/search/photos?query=${query}&client_id=mGrCIgBZNFz0VK6M5r0Ku0ZuqH07Q3OfjhdbYqQWXwo`);
-    //turn response into JSON
-    const json = await response.json();
-    //call renderImages to show them on page 
-    renderImages(json.results);
-};
-
-//use jsonified Unsplash data to display the images the user searched for on the page, with a like button 
+//use jsonified Unsplash data to display the images the user searched for on the page, with a like button
 async function renderImages(data) {
-    //this removes what is already there
+  //this removes what is already there
 
   document.getElementById("mainFeed").innerHTML = "";
-  
-  //this loops through the data and renders an image for each item in the returned data and assigns src, alt 
+
+  //this loops through the data and renders an image for each item in the returned data and assigns src, alt
   data.forEach(function (unsplashImages) {
     const div = document.createElement("div"); //div to contain extra elements (ASH)
     div.className = "img-container";
@@ -124,10 +123,9 @@ async function renderImages(data) {
 
 //getImages("new year"); //default//
 
-
 //########## USER AREA #############
 const thumBar = document.getElementById("thumbnails");
-
+const mainImg = document.getElementById("mainImage");
 //fetch URL's from Database for selected user
 async function getImgURL() {
   const CurrentUserId = { id: selectedUserId };
@@ -143,7 +141,36 @@ async function getImgURL() {
 
   const imgArr = await response.json();
   console.log("image array", imgArr);
+  const thumbContainer = document.getElementById("thumbnails");
+  thumBar.innerHTML = "";
+  imgArr.forEach((element) => {
+    const thumbImg = document.createElement("img");
+    const thumbDiv = document.createElement("div");
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "unlike";
+    delBtn.className = "del-btn";
+    thumbImg.src = element.image_path;
+    thumbImg.alt = element.image_path;
+    thumbImg.className = "thumbnail-img";
+    thumbDiv.appendChild(thumbImg);
+    thumbDiv.appendChild(delBtn);
+    thumbContainer.appendChild(thumbDiv);
+    delBtn.addEventListener("click", async function (event) {
+      event.stopImmediatePropagation();
+      const delEntry = { id: element.id };
+      const res = await fetch("http://localhost:3333/unlike", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(delEntry),
+      });
+      console.log("delete", delEntry);
+      thumbDiv.remove();
+    });
+    thumbImg.addEventListener("click", function () {
+      mainImg.style.backgroundImage = `url("${element.image_path}")`;
+      console.log(mainImg.style.backgroundImage);
+    });
+  });
 }
-D
-getImgURL();
 
+getImgURL();
