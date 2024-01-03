@@ -22,7 +22,6 @@ app.get("/users", (req, res) => {
 app.post("/users", (req, res) => {
   console.log(req.body);
   const userName = req.body.user;
-
   const newentry = db
     .prepare(
       `
@@ -47,6 +46,7 @@ VALUES (?,?)`
   res.json(updateEntry);
   console.log("updated entry: ", updateEntry);
 });
+
 //Fetch user images
 app.post("/userImages", (req, res) => {
   const UserId = req.body.id;
@@ -57,6 +57,7 @@ app.post("/userImages", (req, res) => {
   res.json(returnedImg);
 });
 
+//Unlike function
 app.post("/unlike", (req, res) => {
   const imgID = req.body.id;
   const remImg = db
@@ -69,6 +70,7 @@ WHERE id = ?`
   res.json(remImg);
   console.log("deleted entry:", imgID);
 });
+
 //port
 app.listen(3333, () => {
   console.log("server up on 3333");

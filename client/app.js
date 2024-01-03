@@ -126,46 +126,66 @@ async function renderImages(data) {
 //########## USER AREA #############
 const thumBar = document.getElementById("thumbnails");
 const mainImg = document.getElementById("mainImage");
-//fetch URL's from Database for selected user
+//fetch and display image URL's from Database for selected user
+
 async function getImgURL() {
+  //get userID from userDropdownValue
   const CurrentUserId = { id: selectedUserId };
+  //post request (userID) to /userImages
   const response = await fetch("http://localhost:3333/userImages", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(CurrentUserId),
   });
+  //minor error handling
   if (!response.ok) {
     console.error("Error fetching user images:", response.status);
     return;
   }
-
+//reteive an array containing imageID and imageURL
   const imgArr = await response.json();
   console.log("image array", imgArr);
+  //select the thumbnail container (can be out of function)
   const thumbContainer = document.getElementById("thumbnails");
+  //clear previous images
   thumBar.innerHTML = "";
+  //for each element within the array -> create a new div containing an image and a unlike button
   imgArr.forEach((element) => {
+    //create elements
     const thumbImg = document.createElement("img");
     const thumbDiv = document.createElement("div");
     const delBtn = document.createElement("button");
+    //element settings
     delBtn.textContent = "unlike";
     delBtn.className = "del-btn";
     thumbImg.src = element.image_path;
     thumbImg.alt = element.image_path;
     thumbImg.className = "thumbnail-img";
+    //assemble elements & append to thumbnail area
     thumbDiv.appendChild(thumbImg);
     thumbDiv.appendChild(delBtn);
     thumbContainer.appendChild(thumbDiv);
+
+    //######### UNLIKE function ################
+    //functionnally a delete button
     delBtn.addEventListener("click", async function (event) {
+      //prevent activating elements beneath button
       event.stopImmediatePropagation();
+      //obtain imageID entry from the inital array
       const delEntry = { id: element.id };
+      //send ID to /unlike which will remove the entry
       const res = await fetch("http://localhost:3333/unlike", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(delEntry),
       });
       console.log("delete", delEntry);
+      //remove the element dynamically from page
       thumbDiv.remove();
     });
+    //######### end of unlike function
+//############# THUMBNAIL function ###########
+//click the thumbnail, make the image show on the main section of the screen
     thumbImg.addEventListener("click", function () {
       mainImg.style.backgroundImage = `url("${element.image_path}")`;
       console.log(mainImg.style.backgroundImage);
