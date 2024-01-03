@@ -10,9 +10,10 @@ userDropDown.addEventListener("change", function () {
 document.addEventListener("DOMContentLoaded", function () {
   fetch("http://localhost:3333/users") //for testing - will need changing
     .then((response) => response.json())
-    .then((data) => populateUserList(data))
+    .then((data) => popUserList(data))
     .catch((error) => console.error("Error fetching dropdown options:", error));
 });
+
 
 document.addEventListener("DOMContentLoaded", function () {
   selectedUserId = userDropDown.value;
@@ -20,36 +21,48 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 //above function feeds the 'data' field (an array of usernames) into the below function. The function then creates the options for the dropdown menu, with the value = users ID. This can be referenced later.
 
-function populateUserList(entry) {
-  console.log(userDropDown);
-  //   userDropDown.innerHTML = "";
-  entry.forEach(function (entry) {
-    const optionElement = document.createElement("Option");
-    optionElement.value = entry.id;
-    optionElement.text = entry.username;
-    userDropDown.appendChild(optionElement);
+
+  
+  async function popUserList() {
+    const response = await fetch("http://localhost:3333/users");
+    const user = await response.json();
+    const userDropDown = document.getElementById("userDropdown");
+  
+  // for each user in the database, we create a name in the dropdown 
+    user.forEach(function (user) {
+      const userOption = document.createElement("option");
+
+    // then populate the options with the matching username from the database 
+      userOption.textContent = user.username;
+      userOption.value = user.id
+  
+   // and apend them to the dropdown
+      userDropdown.appendChild(userOption);
   });
-}
-//############### END of dropdown functions ###########
+  };
 
-// ############# Add user function ###########
-const userForm = document.getElementById("addUser");
 
-userForm.addEventListener("submit", async function (event) {
-  event.preventDefault();
-  const formData = new FormData(userForm);
-  const formVal = Object.fromEntries(formData);
-  console.log(formVal);
-  const res = await fetch("http://localhost:3333/users", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(formVal),
+  // ############# Add user function and automatically populate user list###########
+  const userForm = document.getElementById("addUser");
+  userForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const formData = new FormData(userForm);
+    const formVal = Object.fromEntries(formData);
+    const response = await fetch("http://localhost:3333/users", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(formVal),
+    });
+    const json = await response.json();
+    const userDropDown = document.getElementById("userDropdown");
+      userDropDown.innerHTML = ""
+      
+      popUserList();
   });
-});
 
-//user input to change the  unsplash query and change what is rendered on page 
+
+//when user clicks submit, the function calls the getImages() function with the search term (passed through function as userQuery). Then getImages makes an fetch call
 const form = document.getElementById("searchForm");
-
 form.addEventListener("submit", async function(event){
     event.preventDefault();
     const userQuery = event.target.query.value;
@@ -62,17 +75,21 @@ form.addEventListener("submit", async function(event){
 // make API call to unsplash to get images
 async function getImages(query) {
 
-      //make a fetch call to unsplash
+      //fetch data from unsplash
     const response = await fetch (`https://api.unsplash.com/search/photos?query=${query}&client_id=mGrCIgBZNFz0VK6M5r0Ku0ZuqH07Q3OfjhdbYqQWXwo`);
     //turn response into JSON
     const json = await response.json();
     //call renderImages to show them on page 
     renderImages(json.results);
 };
-//use response from Unsplash to change images on the page
+
+//use jsonified Unsplash data to display the images the user searched for on the page, with a like button 
 async function renderImages(data) {
+    //this removes what is already there
+
   document.getElementById("mainFeed").innerHTML = "";
-  //loop through results and render an image for each item
+  
+  //this loops through the data and renders an image for each item in the returned data and assigns src, alt 
   data.forEach(function (unsplashImages) {
     const div = document.createElement("div"); //div to contain extra elements (ASH)
     div.className = "img-container";
