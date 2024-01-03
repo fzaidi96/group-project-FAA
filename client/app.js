@@ -37,47 +37,45 @@ userForm.addEventListener("submit", async function (event) {
   });
 });
 
-// make API call to unsplash to get images
+//user input to change the  unsplash query and change what is rendered on page 
+const form = document.getElementById("searchForm");
 
+form.addEventListener("submit", async function(event){
+    event.preventDefault();
+    const userQuery = event.target.query.value;
+    console.log(userQuery);
+    //make API call with the user's query
+    getImages(userQuery);
+});
+
+
+// make API call to unsplash to get images
 async function getImages(query) {
     //make a fetch call to unsplash
-    const response = await fetch (`https://api.unsplash.com/search/photos?query=new%20year&client_id=mGrCIgBZNFz0VK6M5r0Ku0ZuqH07Q3OfjhdbYqQWXwo`);
+    const response = await fetch (`https://api.unsplash.com/search/photos?query=${query}&client_id=mGrCIgBZNFz0VK6M5r0Ku0ZuqH07Q3OfjhdbYqQWXwo`);
     //turn response into JSON
     const json = await response.json();
-    //return images
-    return json.results;
-}
+    //call renderImages to show them on page 
+    renderImages(json.results);
+};
 
-getImages();
-
-
-//use response from Unsplash to change images on the page
-async function renderImages() {
-    const data = await getImages();
-    //loop through results and render an image for each item 
-    data.forEach(function(imageObj) {
+function renderImages(data) {
+    //remove old images 
+    document.getElementById("mainFeed").innerHTML = "";
+    //loop through results of getImages() and render an image for each item in the array 
+    data.forEach(function(unsplashImages) {
         // create a new image tag, set src and alt,
         const img = document.createElement("img");
 
-        img.src = imageObj.urls.regular;
-        img.alt= imageObj.alt_description;
+        img.src = unsplashImages.urls.regular; //these are properties of the object returned by unsplashImages
+        img.alt= unsplashImages.alt_description;
         //append image to page
         document.getElementById("mainFeed").appendChild(img);
         });
     };
 
+getImages("new year"); //default//
 
-//user input to change the  unsplash query and change what is rendered on page 
-const form = document.getElementById("searchForm");
 
-form.addEventListener("submit", function(event){
-    event.preventDefault();
-    const userQuery = event.target.query.value;
 
-    //make API call with new query
-
-    
-});
-
-renderImages();
-
+//summary notes: when user submits the form, the getImages function is called. The user's search query is the  parameter that is passed through getImages. getImages takes that query and makes a fetch call to API to get all the images related to that query e.g. cats. It gets that data, turns it into JSON and with that json data calls renderImages. renderImages takes that data (json data) and executes its function - i.e. renders the images on the page. 
