@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("Initially Selected User ID:", selectedUserId);
 });
 //above function feeds the 'data' field (an array of usernames) into the below function. The function then creates the options for the dropdown menu, with the value = users ID. This can be referenced later.
+
 function populateUserList(entry) {
   console.log(userDropDown);
   //   userDropDown.innerHTML = "";
@@ -46,26 +47,33 @@ userForm.addEventListener("submit", async function (event) {
   });
 });
 
+//user input to change the  unsplash query and change what is rendered on page 
+const form = document.getElementById("searchForm");
+
+form.addEventListener("submit", async function(event){
+    event.preventDefault();
+    const userQuery = event.target.query.value;
+    console.log(userQuery);
+    //make API call with the user's query
+    getImages(userQuery);
+});
+
+
 // make API call to unsplash to get images
-
 async function getImages(query) {
-  //make a fetch call to unsplash
-  const response = await fetch(
-    `https://api.unsplash.com/search/photos?query=new%20year&client_id=mGrCIgBZNFz0VK6M5r0Ku0ZuqH07Q3OfjhdbYqQWXwo`
-  );
-  //turn response into JSON
-  const json = await response.json();
-  //return images
-  return json.results;
-}
 
-getImages();
-
+      //make a fetch call to unsplash
+    const response = await fetch (`https://api.unsplash.com/search/photos?query=${query}&client_id=mGrCIgBZNFz0VK6M5r0Ku0ZuqH07Q3OfjhdbYqQWXwo`);
+    //turn response into JSON
+    const json = await response.json();
+    //call renderImages to show them on page 
+    renderImages(json.results);
+};
 //use response from Unsplash to change images on the page
-async function renderImages() {
-  const data = await getImages();
+async function renderImages(data) {
+  document.getElementById("mainFeed").innerHTML = "";
   //loop through results and render an image for each item
-  data.forEach(function (imageObj) {
+  data.forEach(function (unsplashImages) {
     const div = document.createElement("div"); //div to contain extra elements (ASH)
     div.className = "img-container";
     // create a new image tag, set src and alt,
@@ -75,15 +83,15 @@ async function renderImages() {
     likeBtn.src = "./images/heart.png";
     likeBtn.alt = "like button";
     likeBtn.className = "like-button";
-    img.src = imageObj.urls.regular;
-    img.alt = imageObj.alt_description;
+    img.src = unsplashImages.urls.regular; //these are properties of the object returned by unsplashImages
+    img.alt= unsplashImages.alt_description;
     //######### Like Button function #########
     likeBtn.addEventListener("click", async function (event) {
       event.stopImmediatePropagation();
-      console.log(imageObj.urls.regular);
+      console.log(unsplashImages.urls.regular);
       const newEntry = {
         id: selectedUserId,
-        imagePath: imageObj.urls.regular,
+        imagePath: unsplashImages.urls.regular,
       };
       console.log(selectedUserId.value);
       const res = await fetch("http://localhost:3333/liked", {
@@ -98,15 +106,5 @@ async function renderImages() {
     document.getElementById("mainFeed").appendChild(div);
   });
 }
+getImages("new year"); //default//
 
-//user input to change the  unsplash query and change what is rendered on page
-const form = document.getElementById("searchForm");
-
-form.addEventListener("submit", function (event) {
-  event.preventDefault();
-  const userQuery = event.target.query.value;
-
-  //make API call with new query
-});
-
-renderImages();
