@@ -1,10 +1,12 @@
 //################ DROPDOWN FUNCTION ##############
 //event listener on document - uses fetch/then could use async/fetch if better?
 const userDropDown = document.getElementById("userDropdown");
+userDropDown.value = 1;
 let selectedUserId = userDropDown.value;
 userDropDown.addEventListener("change", function () {
   selectedUserId = userDropDown.value;
   console.log("Selected User ID:", selectedUserId);
+  getImgURL();
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -14,14 +16,11 @@ document.addEventListener("DOMContentLoaded", function () {
     .catch((error) => console.error("Error fetching dropdown options:", error));
 });
 
-
 document.addEventListener("DOMContentLoaded", function () {
   selectedUserId = userDropDown.value;
   console.log("Initially Selected User ID:", selectedUserId);
 });
 //above function feeds the 'data' field (an array of usernames) into the below function. The function then creates the options for the dropdown menu, with the value = users ID. This can be referenced later.
-
-
   
   async function popUserList() {
     const response = await fetch("http://localhost:3333/users");
@@ -30,14 +29,14 @@ document.addEventListener("DOMContentLoaded", function () {
   
   // for each user in the database, we create a name in the dropdown 
     user.forEach(function (user) {
-      const userOption = document.createElement("option");
+      const optionElement = document.createElement("option");
 
     // then populate the options with the matching username from the database 
-      userOption.textContent = user.username;
-      userOption.value = user.id
+      optionElement.textContent = user.username;
+      optionElement.value = user.id
   
    // and apend them to the dropdown
-      userDropdown.appendChild(userOption);
+      userDropdown.appendChild(optionElement);
   });
   };
 
@@ -123,5 +122,25 @@ async function renderImages(data) {
     document.getElementById("mainFeed").appendChild(div);
   });
 }
-getImages("new year"); //default//
+//getImages("new year"); //default//
 
+//########## USER AREA #############
+const thumBar = document.getElementById("thumbnails");
+
+//fetch URL's from Database for selected user
+async function getImgURL() {
+  const CurrentUserId = { id: selectedUserId };
+  const response = await fetch("http://localhost:3333/userImages", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(CurrentUserId),
+  });
+  if (!response.ok) {
+    console.error("Error fetching user images:", response.status);
+    return;
+  }
+
+  const imgArr = await response.json();
+  console.log("image array", imgArr);
+}
+getImgURL();

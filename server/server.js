@@ -31,6 +31,7 @@ app.post("/users", (req, res) => {
     .run(userName);
   res.json(newentry);
 });
+
 //log new likes
 app.post("/liked", (req, res) => {
   const UserId = req.body.id;
@@ -46,6 +47,16 @@ VALUES (?,?)`
   res.json(updateEntry);
   console.log("updated entry: ", updateEntry);
 });
+//Fetch user images
+app.post("/userImages", (req, res) => {
+  const UserId = req.body.id;
+  console.log("fetch img for user", UserId);
+  const returnedImg = db
+    .prepare(`SELECT image_path FROM images WHERE user_id = ?`)
+    .all(UserId);
+  res.json(returnedImg);
+});
+
 //port
 app.listen(3333, () => {
   console.log("server up on 3333");
