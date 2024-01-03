@@ -59,7 +59,6 @@ document.addEventListener("DOMContentLoaded", function () {
       popUserList();
   });
 
-
 //when user clicks submit, the function calls the getImages() function with the search term (passed through function as userQuery). Then getImages makes an fetch call
 const form = document.getElementById("searchForm");
 form.addEventListener("submit", async function(event){
@@ -70,9 +69,9 @@ form.addEventListener("submit", async function(event){
     getImages(userQuery);
 });
 
-
 // make API call to unsplash to get images
 async function getImages(query) {
+
 
       //fetch data from unsplash
     const response = await fetch (`https://api.unsplash.com/search/photos?query=${query}&client_id=mGrCIgBZNFz0VK6M5r0Ku0ZuqH07Q3OfjhdbYqQWXwo`);
@@ -100,7 +99,7 @@ async function renderImages(data) {
     likeBtn.alt = "like button";
     likeBtn.className = "like-button";
     img.src = unsplashImages.urls.regular; //these are properties of the object returned by unsplashImages
-    img.alt= unsplashImages.alt_description;
+    img.alt = unsplashImages.alt_description;
     //######### Like Button function #########
     likeBtn.addEventListener("click", async function (event) {
       event.stopImmediatePropagation();
@@ -122,7 +121,9 @@ async function renderImages(data) {
     document.getElementById("mainFeed").appendChild(div);
   });
 }
+
 //getImages("new year"); //default//
+
 
 //########## USER AREA #############
 const thumBar = document.getElementById("thumbnails");
@@ -143,4 +144,6 @@ async function getImgURL() {
   const imgArr = await response.json();
   console.log("image array", imgArr);
 }
+D
 getImgURL();
+
