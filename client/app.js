@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+  popUserList();
   selectedUserId = userDropDown.value;
   console.log("Initially Selected User ID:", selectedUserId);
 });
@@ -27,17 +28,23 @@ async function popUserList() {
   const user = await response.json();
   const userDropDown = document.getElementById("userDropdown");
 
-  // for each user in the database, we create a name in the dropdown
+  // Clear previous options
+  userDropDown.innerHTML = "";
+
+  // For each user in the database, create an option in the dropdown
   user.forEach(function (user) {
     const optionElement = document.createElement("option");
 
-    // then populate the options with the matching username from the database
+    // Populate the options with the matching username from the database
     optionElement.textContent = user.username;
     optionElement.value = user.id;
 
-    // and apend them to the dropdown
-    userDropdown.appendChild(optionElement);
+    // Append them to the dropdown
+    userDropDown.appendChild(optionElement);
   });
+
+  // Trigger the 'change' event on the dropdown after options are appended
+  userDropDown.dispatchEvent(new Event("change"));
 }
 
 // ############# Add user function and automatically populate user list###########
@@ -121,7 +128,7 @@ async function renderImages(data) {
   });
 }
 
-//getImages("new year"); //default//
+getImages("new year"); //default//
 
 //########## USER AREA #############
 const thumBar = document.getElementById("thumbnails");
@@ -142,7 +149,7 @@ async function getImgURL() {
     console.error("Error fetching user images:", response.status);
     return;
   }
-//reteive an array containing imageID and imageURL
+  //reteive an array containing imageID and imageURL
   const imgArr = await response.json();
   console.log("image array", imgArr);
   //select the thumbnail container (can be out of function)
@@ -184,8 +191,8 @@ async function getImgURL() {
       thumbDiv.remove();
     });
     //######### end of unlike function
-//############# THUMBNAIL function ###########
-//click the thumbnail, make the image show on the main section of the screen
+    //############# THUMBNAIL function ###########
+    //click the thumbnail, make the image show on the main section of the screen
     thumbImg.addEventListener("click", function () {
       mainImg.style.backgroundImage = `url("${element.image_path}")`;
       console.log(mainImg.style.backgroundImage);
