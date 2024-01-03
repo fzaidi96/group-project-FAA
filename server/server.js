@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
 
 //fetch usernames 4 dropdown
 app.get("/users", (req, res) => {
-  const users = db.prepare(`SELECT username FROM users`).all();
+  const users = db.prepare(`SELECT * FROM users`).all();
   res.json(users);
 });
 
@@ -26,14 +26,27 @@ app.post("/users", (req, res) => {
   const newentry = db
     .prepare(
       `
-    INSERT INTO users (username)`
+    INSERT INTO users (username) VALUES (?)`
     )
     .run(userName);
   res.json(newentry);
 });
-
+//log new likes
+app.post("/liked", (req, res) => {
+  const UserId = req.body.id;
+  const img = req.body.imagePath;
+  console.log(UserId, img);
+  const updateEntry = db
+    .prepare(
+      `INSERT INTO images
+(user_id, image_path)
+VALUES (?,?)`
+    )
+    .run(UserId, img);
+  res.json(updateEntry);
+  console.log("updated entry: ", updateEntry);
+});
 //port
 app.listen(3333, () => {
   console.log("server up on 3333");
 });
-
