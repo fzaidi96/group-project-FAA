@@ -29,6 +29,7 @@
   padding:5px;
  
  }
+ 
 /*working*/
 *{
   box-sizing: border-box;
@@ -43,7 +44,7 @@ header{
  /* background-color: pink;*/
   display: flex;
   flex-direction: row;
-  
+  justify-content: space-between;
   align-items: center;
   font-family: sans-serif;
 }
@@ -80,8 +81,11 @@ button
   color: #fff;
   cursor: pointer;
 } 
-.user{
-  align-items: right;
+.Userlist{
+  margin-right:10px;
+}
+#userDropdown{
+  margin-left: -100px;
 }
 
 .thumbnail-img {
