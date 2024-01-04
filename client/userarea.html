@@ -7,33 +7,77 @@
     <link rel="stylesheet" href="/style.css" />
     <script src="/src/app.js" defer type="module"></script>
   </head>
-  
+
   <body>
     <header>
-      <a href="./index.html"><img src="./images/Logo.png" alt="logo" class="logo" /></a>
-      <form id="searchForm">
+      <div class="container">
+        <img src="./images/Logo.png" alt="logo" class="logo" />
+
+        <button id="add-user-btn" class="ua" type="">+ USER</button>
+
+        <nav>
+          <a
+            href="/
+        "
+            >Home</a
+          >
+          <a href="/userarea">User Space</a>
+          <a href="/about">About</a>
+        </nav>
+        <div id="userAreaBtn">
+          <a href="./userarea.html"
+            ><img
+              src="./images/user1.png"
+              alt="user area button"
+              style="width: 40px; height: 40px"
+          /></a>
+        </div>
+      </div>
+      <form id="searchForm" class="ua">
         <input
+          class="ua"
           type="search"
           name="query"
           id=""
           placeholder="Search for Images..."
-        /> <button id="submitSearch">Search</button>
+        />
+
+        <button id="submitSearch" class="ua">Search</button>
       </form>
-      <form id="addUser">
-        <input type="text" name="user" id="addUserTxt" placeholder="User Name" />
-        <button type="submit">+</button>
-      </form>
-      <button class="Userlist" type="userlist">List of Users</button>
-      <select id="userDropdown" name="dropdown">
-        <!-- <option value="option1">Option 1</option> -->
-      </select>
-      <div id="userAreaBtn">
-        <img class="user" src="./images/user1.png" alt="user area button" style="width: 40px; height:40px" />
-      </div>
+      <select id="userDropdown" name="dropdown"></select>
     </header>
     <main>
       <div id="thumbnails" class="thumbnail-container"></div>
-      <div id="mainImage" class="mainImage">main img</div>
+      <div id="mainImage-box" class="mainImage-box">
+        <img
+          id="mainImage"
+          src="https://images.unsplash.com/photo-1538099384082-c33e0239c424?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1NDc3NDl8MHwxfHNlYXJjaHwyMjJ8fGZveHxlbnwwfHx8fDE3MDQ0MTAxMjl8MA&ixlib=rb-4.0.3&q=80&w=1080"
+          alt=""
+        />
+      </div>
+
+      <div id="add-user-overlay">
+        <div id="user-form">
+          <form id="addUser">
+            <h2>Choose a username</h2>
+            <p>
+              Usernames must be unique, try combining your name with your
+              favourite animal :)
+            </p>
+            <input
+              type="text"
+              name="user"
+              id="addUserTxt"
+              placeholder="User Name"
+              minlength="3"
+              maxlength="30"
+              required
+            />
+            <button type="submit">+</button>
+          </form>
+          <button id="close-user">Close without saving</button>
+        </div>
+      </div>
     </main>
   </body>
 </html>
