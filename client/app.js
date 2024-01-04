@@ -11,19 +11,35 @@ userDropDown.addEventListener("change", function () {
   );
   getImgURL();
 });
-window.onload = function () {
-  popUserList();
-  selectedUserId = userDropDown.value;
-  console.log(userDropDown.value);
-  console.log("Initially Selected User ID:", selectedUserId);
-};
+//DELETE IF WORKING
+// window.onload = function () {
+//   popUserList();
+//   selectedUserId = userDropDown.value;
+//   console.log(userDropDown.value);
+//   console.log("Initially Selected User ID:", selectedUserId);
+// };
 
 document.addEventListener("DOMContentLoaded", function () {
-  fetch("http://localhost:3333/users") //for testing - will need changing
-    .then((response) => response.json())
-    .then((data) => popUserList(data))
-    .catch((error) => console.error("Error fetching dropdown options:", error));
+  if (!selectedUserId) {
+    // Show the popup if no username is selected
+    showPopup();
+  } else {
+    // Username is selected, proceed with the initialization
+    popUserList();
+    selectedUserId = userDropDown.value;
+    console.log(userDropDown.value);
+    console.log("Initially Selected User ID:", selectedUserId);
+  }
+  //now close the popup and continue
+  const closeButton = document.getElementById("closePopup");
+  closeButton.addEventListener("click", function () {
+    document.getElementById("overlay").style.display = "none";
+  });
 });
+
+function showPopup() {
+  document.getElementById("overlay").style.display = "flex";
+}
 
 //above function feeds the 'data' field (an array of usernames) into the below function. The function then creates the options for the dropdown menu, with the value = users ID. This can be referenced later.
 
