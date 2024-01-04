@@ -73,7 +73,10 @@ async function popUserList() {
 
   getImgURL();
 }
-// ############# ADD USER function and automatically populate user list###########
+
+popUserList();
+
+// ############# Add user function and automatically populate user list###########
 const userForm = document.getElementById("addUser");
 userForm.addEventListener("submit", async function (event) {
   event.preventDefault();
