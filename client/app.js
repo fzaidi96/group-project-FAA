@@ -25,44 +25,69 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function popUserList() {
   const response = await fetch("http://localhost:3333/users");
-  const user = await response.json();
+  const users = await response.json();
   const userDropDown = document.getElementById("userDropdown");
 
   // Clear previous options
   userDropDown.innerHTML = "";
 
-  // For each user in the database, create an option in the dropdown
-  user.forEach(function (user) {
-    const optionElement = document.createElement("option");
+  // Add a default option
+  const defaultOption = document.createElement("option");
+  defaultOption.textContent = "Select a user";
+  defaultOption.value = "";
+  userDropDown.appendChild(defaultOption);
 
-    // Populate the options with the matching username from the database
+  // Add each user as an option
+  users.forEach(function (user) {
+    const optionElement = document.createElement("option");
     optionElement.textContent = user.username;
     optionElement.value = user.id;
-
-    // Append them to the dropdown
     userDropDown.appendChild(optionElement);
   });
 
   // Trigger the 'change' event on the dropdown after options are appended
   userDropDown.dispatchEvent(new Event("change"));
-}
 
+  // Select the last option (newly added user)
+  userDropDown.selectedIndex = userDropDown.options.length - 1;
+
+  getImgURL();
+}
 // ############# Add user function and automatically populate user list###########
 const userForm = document.getElementById("addUser");
 userForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   const formData = new FormData(userForm);
   const formVal = Object.fromEntries(formData);
-  const response = await fetch("http://localhost:3333/users", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(formVal),
-  });
-  const json = await response.json();
-  const userDropDown = document.getElementById("userDropdown");
-  userDropDown.innerHTML = "";
+  //in try function for error handling
+  try {
+    const response = await fetch("http://localhost:3333/users", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(formVal),
+    });
 
-  popUserList();
+    const json = await response.json();
+    //if anything from the server is other than expected throw error
+    if (!response.ok) {
+      throw new Error(json.error || "Network response was not ok");
+    }
+    //else its succesful
+    console.log("Success:", json);
+    //select userdropdown element
+    const userDropDown = document.getElementById("userDropdown");
+    //clear it
+    userDropDown.innerHTML = "";
+    //fire the popuserlist function
+    popUserList();
+    //if error was caught display error message, if its due to duplication throw an alert.
+  } catch (error) {
+    console.error("Error:", error.message);
+
+    if (error.message.includes("Duplicate value detected.")) {
+      alert("User already exists!");
+    }
+  }
 });
 
 //when user clicks submit, the function calls the getImages() function with the search term (passed through function as userQuery). Then getImages makes an fetch call
@@ -114,7 +139,7 @@ async function renderImages(data) {
         id: selectedUserId,
         imagePath: unsplashImages.urls.regular,
       };
-      console.log(selectedUserId.value);
+      console.log("save image to userID:", selectedUserId.value);
       const res = await fetch("http://localhost:3333/liked", {
         method: "POST",
         headers: { "content-type": "application/json" },

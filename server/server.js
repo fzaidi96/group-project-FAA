@@ -22,13 +22,28 @@ app.get("/users", (req, res) => {
 app.post("/users", (req, res) => {
   console.log(req.body);
   const userName = req.body.user;
-  const newentry = db
-    .prepare(
-      `
-    INSERT INTO users (username) VALUES (?)`
-    )
-    .run(userName);
-  res.json(newentry);
+  let newentry;
+  try {
+    const result = db
+      .prepare(`INSERT INTO users (username) VALUES (?)`)
+      .run(userName);
+
+    newentry = {
+      id: result.lastInsertRowid,
+      username: userName,
+    };
+
+    console.log("Insert successful:", newentry);
+    res.status(200).json(newentry);
+  } catch (error) {
+    if (error.code === "SQLITE_CONSTRAINT_UNIQUE") {
+      console.error("Duplicate value detected.");
+      res.status(409).json({ error: "Duplicate value detected." });
+    } else {
+      console.error("Error:", error.message);
+      res.status(500).json({ error: "Internal Server Error." });
+    }
+  }
 });
 
 //log new likes
