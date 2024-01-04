@@ -71,6 +71,7 @@ header{
 {
   border-radius: 45px;
 }
+
 button
 {
   background-color: #cf245f;
@@ -81,9 +82,78 @@ button
   color: #fff;
   cursor: pointer;
 } 
+<<<<<<< HEAD
 .Userlist{
   margin-right:10px;
 }
 #userDropdown{
   margin-left: -100px;
+=======
+.user{
+  align-items: right;
+}
+
+.thumbnail-img {
+  height: 250px;
+  width: 250px;
+}
+.mainImage {
+  width: 800px;
+  height: 800px;
+  background-image: none;
+  background-color: orange;
+}
+
+
+#overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+}
+
+#popup {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+#popup select,
+#popup input,
+#popup button {
+  margin: 10px 0;
+}
+
+footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  position: fixed;
+  bottom: 0;
+  left: 40%;
+  color: white;
+  font-size: 12px;
+}
+
+.about-us{
+  font-family: sans-serif;
+  color: white;
+  text-align: center;
+  max-width: 1000px;
+  padding: 20px;
+  border-radius: 8px;
+  border: solid white 2px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+>>>>>>> main
 }
