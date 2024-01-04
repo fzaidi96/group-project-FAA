@@ -9,31 +9,25 @@
   </head>
   <body>
     <header>
-      <h3>Team FAA</h3>
-      <img src="" alt="logo" class="logo" />
-
+      <a href="./index.html"><img src="./images/Logo.png" alt="logo" class="logo" /></a>
       <form id="searchForm">
         <input
           type="search"
           name="query"
           id=""
-          placeholder="search for images..."
-        />
-        <button id="submitSearch">search</button>
+          placeholder="Search for Images..."
+        /> <button id="submitSearch">Search</button>
       </form>
-
       <form id="addUser">
-        <input type="text" name="user" id="addUserTxt" placeholder="user" />
+        <input type="text" name="user" id="addUserTxt" placeholder="User Name" />
         <button type="submit">+</button>
       </form>
-      <label for="userDropdown">User:</label>
+      <button class="Userlist" type="userlist">List of Users</button>
       <select id="userDropdown" name="dropdown">
         <!-- <option value="option1">Option 1</option> -->
       </select>
       <div id="userAreaBtn">
-        <a href="http://localhost:5173/">
-          <img src="" alt="user area button"
-        /></a>
+        <img class="user" src="./images/user1.png" alt="user area button" style="width: 40px; height:40px" />
       </div>
     </header>
     <main>
