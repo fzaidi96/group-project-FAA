@@ -1,14 +1,23 @@
 //################ DROPDOWN FUNCTION ##############
 //event listener on document - uses fetch/then could use async/fetch if better?
 const userDropDown = document.getElementById("userDropdown");
-userDropDown.value = 1;
-let selectedUserId = userDropDown.value;
+let selectedUserId;
 userDropDown.addEventListener("change", function () {
   selectedUserId = userDropDown.value;
-  console.log("Selected User ID:", selectedUserId);
+  console.log(
+    "Selected User ID:",
+    userDropDown.options[(selectedUserId, userDropDown.selectedIndex)],
+    userDropDown.value
+  );
   getImgURL();
 });
-
+//DELETE IF WORKING
+// window.onload = function () {
+//   popUserList();
+//   selectedUserId = userDropDown.value;
+//   console.log(userDropDown.value);
+//   console.log("Initially Selected User ID:", selectedUserId);
+// };
 
 document.addEventListener("DOMContentLoaded", function () {
   if (!selectedUserId) {
@@ -17,6 +26,8 @@ document.addEventListener("DOMContentLoaded", function () {
   } else {
     // Username is selected, proceed with the initialization
     popUserList();
+    selectedUserId = userDropDown.value;
+    console.log(userDropDown.value);
     console.log("Initially Selected User ID:", selectedUserId);
   }
   //now close the popup and continue
@@ -29,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function showPopup() {
   document.getElementById("overlay").style.display = "flex";
 }
-  
+
 //above function feeds the 'data' field (an array of usernames) into the below function. The function then creates the options for the dropdown menu, with the value = users ID. This can be referenced later.
 
 async function popUserList() {
@@ -41,10 +52,10 @@ async function popUserList() {
   userDropDown.innerHTML = "";
 
   // Add a default option
-  const defaultOption = document.createElement("option");
-  defaultOption.textContent = "Select a user";
-  defaultOption.value = "";
-  userDropDown.appendChild(defaultOption);
+  // const defaultOption = document.createElement("option");
+  // defaultOption.textContent = "default";
+  // defaultOption.value = "0";
+  // userDropDown.appendChild(defaultOption);
 
   // Add each user as an option
   users.forEach(function (user) {
@@ -58,7 +69,7 @@ async function popUserList() {
   userDropDown.dispatchEvent(new Event("change"));
 
   // Select the last option (newly added user)
-  userDropDown.selectedIndex = userDropDown.options.length - 1;
+  // userDropDown.selectedIndex = userDropDown.options.length - 1;
 
   getImgURL();
 }
@@ -100,6 +111,7 @@ userForm.addEventListener("submit", async function (event) {
       alert("User already exists!");
     }
   }
+  userDropDown.selectedIndex = userDropDown.options.length - 1;
 });
 
 //when user clicks submit, the function calls the getImages() function with the search term (passed through function as userQuery). Then getImages makes an fetch call
@@ -132,12 +144,17 @@ async function renderImages(data) {
 
   //this loops through the data and renders an image for each item in the returned data and assigns src, alt
   data.forEach(function (unsplashImages) {
-    const div = document.createElement("div"); //div to contain extra elements (ASH)
+    const div = document.createElement("div");
     div.className = "img-container";
     // create a new image tag, set src and alt,
     const img = document.createElement("img");
     const likeBtn = document.createElement("img");
-    //likeBtn to append (ASH)
+    const addedTxt = document.createElement("p");
+    addedTxt.textContent = "image added!";
+    addedTxt.style.display = "none";
+    const alreadyAddedTxt = document.createElement("p");
+    alreadyAddedTxt.textContent = "image already liked!";
+    alreadyAddedTxt.style.display = "none";
     likeBtn.src = "./images/heart.png";
     likeBtn.alt = "like button";
     likeBtn.className = "like-button";
@@ -147,18 +164,51 @@ async function renderImages(data) {
     likeBtn.addEventListener("click", async function (event) {
       event.stopImmediatePropagation();
       console.log(unsplashImages.urls.regular);
+
+      const queryImg = {
+        id: selectedUserId,
+      };
+      const response = await fetch("http://localhost:3333/userImages", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(queryImg),
+      });
+      const imgArr = await response.json();
+      let match = false;
+      for (let i = 0; i < imgArr.length; i++) {
+        const ele = imgArr[i].image_path;
+        const img = unsplashImages.urls.regular;
+        if (ele == img) {
+          console.log("match", i);
+          match = true;
+        }
+      }
+      if (match === true) {
+        alreadyAddedTxt.style.display = "block";
+        setTimeout(() => {
+          alreadyAddedTxt.style.display = "none";
+        }, 1000);
+      } else if (match === false) {
+        addedTxt.style.display = "block";
+        setTimeout(() => {
+          addedTxt.style.display = "none";
+        }, 1000);
+      }
       const newEntry = {
         id: selectedUserId,
         imagePath: unsplashImages.urls.regular,
+        altTxt: unsplashImages.alt_description,
       };
-      console.log("save image to userID:", selectedUserId.value);
-      const res = await fetch("http://localhost:3333/liked", {
+      console.log("save image to userID:", selectedUserId);
+      await fetch("http://localhost:3333/liked", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(newEntry),
       });
     });
     div.appendChild(img);
+    div.appendChild(addedTxt);
+    div.appendChild(alreadyAddedTxt);
     div.appendChild(likeBtn);
     //append image to page
     document.getElementById("mainFeed").appendChild(div);
@@ -203,7 +253,8 @@ async function getImgURL() {
     delBtn.textContent = "unlike";
     delBtn.className = "del-btn";
     thumbImg.src = element.image_path;
-    thumbImg.alt = element.image_path;
+    thumbImg.alt = element.alt_text;
+    console.log(element);
     thumbImg.className = "thumbnail-img";
     //assemble elements & append to thumbnail area
     thumbDiv.appendChild(thumbImg);

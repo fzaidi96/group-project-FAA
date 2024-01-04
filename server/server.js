@@ -50,14 +50,15 @@ app.post("/users", (req, res) => {
 app.post("/liked", (req, res) => {
   const UserId = req.body.id;
   const img = req.body.imagePath;
+  const altTxt = req.body.altTxt;
   console.log(UserId, img);
   const updateEntry = db
     .prepare(
       `INSERT INTO images
-(user_id, image_path)
-VALUES (?,?)`
+(user_id, image_path, alt_text)
+VALUES (?,?,?)`
     )
-    .run(UserId, img);
+    .run(UserId, img, altTxt);
   res.json(updateEntry);
   console.log("updated entry: ", updateEntry);
 });
@@ -67,7 +68,7 @@ app.post("/userImages", (req, res) => {
   const UserId = req.body.id;
   console.log("fetch img for user", UserId);
   const returnedImg = db
-    .prepare(`SELECT id, image_path FROM images WHERE user_id = ?`)
+    .prepare(`SELECT id, image_path, alt_text FROM images WHERE user_id = ?`)
     .all(UserId);
   res.json(returnedImg);
 });
