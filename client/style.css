@@ -26,9 +26,10 @@
   flex-direction: column;
   gap: 1rem;
   border:4px solid #e82a76;
-  padding:5px;
- 
+  padding:5px;   
+
  }
+ 
 /*working*/
 *{
   box-sizing: border-box;
@@ -43,10 +44,11 @@ header{
  /* background-color: pink;*/
   display: flex;
   flex-direction: row;
-  
   align-items: center;
   font-family: sans-serif;
-}
+  justify-content: space-between;
+  
+  }
 #mainFeed{
  
   display:flex;
@@ -79,6 +81,9 @@ button
   color: #fff;
   cursor: pointer;
 } 
-.user{
-  align-items: right;
+.Userlist{
+  margin-right:10px;
+}
+#userDropdown{
+  margin-left: -100px;
 }
