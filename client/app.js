@@ -122,7 +122,7 @@ async function renderImages(data) {
   });
 }
 
-//getImages("new year"); //default//
+getImages("new year"); //default//
 
 
 //########## USER AREA #############
