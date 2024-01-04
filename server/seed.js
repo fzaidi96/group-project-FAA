@@ -7,15 +7,16 @@ db.exec(`
 CREATE TABLE IF NOT EXISTS users
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT)`);
+    username TEXT UNIQUE)`);
 
 // create IMAGES table
 db.exec(`
 CREATE TABLE IF NOT EXISTS images (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
-  image_path TEXT NOT NULL,
+  image_path TEXT NOT NULL ,
   FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+  UNIQUE(user_id, image_path)
 )
 `);
 

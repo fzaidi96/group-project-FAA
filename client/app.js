@@ -17,77 +17,108 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+  popUserList();
   selectedUserId = userDropDown.value;
   console.log("Initially Selected User ID:", selectedUserId);
 });
 //above function feeds the 'data' field (an array of usernames) into the below function. The function then creates the options for the dropdown menu, with the value = users ID. This can be referenced later.
-  
-  async function popUserList() {
-    const response = await fetch("http://localhost:3333/users");
-    const user = await response.json();
-    const userDropDown = document.getElementById("userDropdown");
-  
-  // for each user in the database, we create a name in the dropdown 
-    user.forEach(function (user) {
-      const optionElement = document.createElement("option");
 
-    // then populate the options with the matching username from the database 
-      optionElement.textContent = user.username;
-      optionElement.value = user.id
-  
-   // and apend them to the dropdown
-      userDropdown.appendChild(optionElement);
+async function popUserList() {
+  const response = await fetch("http://localhost:3333/users");
+  const users = await response.json();
+  const userDropDown = document.getElementById("userDropdown");
+
+  // Clear previous options
+  userDropDown.innerHTML = "";
+
+  // Add a default option
+  const defaultOption = document.createElement("option");
+  defaultOption.textContent = "Select a user";
+  defaultOption.value = "";
+  userDropDown.appendChild(defaultOption);
+
+  // Add each user as an option
+  users.forEach(function (user) {
+    const optionElement = document.createElement("option");
+    optionElement.textContent = user.username;
+    optionElement.value = user.id;
+    userDropDown.appendChild(optionElement);
   });
-  };
 
+  // Trigger the 'change' event on the dropdown after options are appended
+  userDropDown.dispatchEvent(new Event("change"));
 
-  // ############# Add user function and automatically populate user list###########
-  const userForm = document.getElementById("addUser");
-  userForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
-    const formData = new FormData(userForm);
-    const formVal = Object.fromEntries(formData);
+  // Select the last option (newly added user)
+  userDropDown.selectedIndex = userDropDown.options.length - 1;
+
+  getImgURL();
+}
+// ############# Add user function and automatically populate user list###########
+const userForm = document.getElementById("addUser");
+userForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const formData = new FormData(userForm);
+  const formVal = Object.fromEntries(formData);
+  //in try function for error handling
+  try {
     const response = await fetch("http://localhost:3333/users", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(formVal),
     });
+
     const json = await response.json();
+    //if anything from the server is other than expected throw error
+    if (!response.ok) {
+      throw new Error(json.error || "Network response was not ok");
+    }
+    //else its succesful
+    console.log("Success:", json);
+    //select userdropdown element
     const userDropDown = document.getElementById("userDropdown");
-      userDropDown.innerHTML = ""
-      
-      popUserList();
-  });
+    //clear it
+    userDropDown.innerHTML = "";
+    //fire the popuserlist function
+    popUserList();
+    //if error was caught display error message, if its due to duplication throw an alert.
+  } catch (error) {
+    console.error("Error:", error.message);
+
+    if (error.message.includes("Duplicate value detected.")) {
+      alert("User already exists!");
+    }
+  }
+});
 
 //when user clicks submit, the function calls the getImages() function with the search term (passed through function as userQuery). Then getImages makes an fetch call
 const form = document.getElementById("searchForm");
-form.addEventListener("submit", async function(event){
-    event.preventDefault();
-    const userQuery = event.target.query.value;
-    console.log(userQuery);
-    //make API call with the user's query
-    getImages(userQuery);
+form.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const userQuery = event.target.query.value;
+  console.log(userQuery);
+  //make API call with the user's query
+  getImages(userQuery);
 });
 
 // make API call to unsplash to get images
 async function getImages(query) {
+  //fetch data from unsplash
+  const response = await fetch(
+    `https://api.unsplash.com/search/photos?query=${query}&client_id=mGrCIgBZNFz0VK6M5r0Ku0ZuqH07Q3OfjhdbYqQWXwo`
+  );
+  //turn response into JSON
+  const json = await response.json();
+  //call renderImages to show them on page
+  renderImages(json.results);
+}
 
-
-      //fetch data from unsplash
-    const response = await fetch (`https://api.unsplash.com/search/photos?query=${query}&client_id=mGrCIgBZNFz0VK6M5r0Ku0ZuqH07Q3OfjhdbYqQWXwo`);
-    //turn response into JSON
-    const json = await response.json();
-    //call renderImages to show them on page 
-    renderImages(json.results);
-};
-
-//use jsonified Unsplash data to display the images the user searched for on the page, with a like button 
+//use jsonified Unsplash data to display the images the user searched for on the page, with a like button
 async function renderImages(data) {
-    //this removes what is already there
+  //this removes what is already there
 
   document.getElementById("mainFeed").innerHTML = "";
-  
-  //this loops through the data and renders an image for each item in the returned data and assigns src, alt 
+
+  //this loops through the data and renders an image for each item in the returned data and assigns src, alt
   data.forEach(function (unsplashImages) {
     const div = document.createElement("div"); //div to contain extra elements (ASH)
     div.className = "img-container";
@@ -108,7 +139,7 @@ async function renderImages(data) {
         id: selectedUserId,
         imagePath: unsplashImages.urls.regular,
       };
-      console.log(selectedUserId.value);
+      console.log("save image to userID:", selectedUserId.value);
       const res = await fetch("http://localhost:3333/liked", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -124,26 +155,74 @@ async function renderImages(data) {
 
 getImages("new year"); //default//
 
-
 //########## USER AREA #############
 const thumBar = document.getElementById("thumbnails");
+const mainImg = document.getElementById("mainImage");
+//fetch and display image URL's from Database for selected user
 
-//fetch URL's from Database for selected user
 async function getImgURL() {
+  //get userID from userDropdownValue
   const CurrentUserId = { id: selectedUserId };
+  //post request (userID) to /userImages
   const response = await fetch("http://localhost:3333/userImages", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(CurrentUserId),
   });
+  //minor error handling
   if (!response.ok) {
     console.error("Error fetching user images:", response.status);
     return;
   }
-
+  //reteive an array containing imageID and imageURL
   const imgArr = await response.json();
   console.log("image array", imgArr);
-}
-D
-getImgURL();
+  //select the thumbnail container (can be out of function)
+  const thumbContainer = document.getElementById("thumbnails");
+  //clear previous images
+  thumBar.innerHTML = "";
+  //for each element within the array -> create a new div containing an image and a unlike button
+  imgArr.forEach((element) => {
+    //create elements
+    const thumbImg = document.createElement("img");
+    const thumbDiv = document.createElement("div");
+    const delBtn = document.createElement("button");
+    //element settings
+    delBtn.textContent = "unlike";
+    delBtn.className = "del-btn";
+    thumbImg.src = element.image_path;
+    thumbImg.alt = element.image_path;
+    thumbImg.className = "thumbnail-img";
+    //assemble elements & append to thumbnail area
+    thumbDiv.appendChild(thumbImg);
+    thumbDiv.appendChild(delBtn);
+    thumbContainer.appendChild(thumbDiv);
 
+    //######### UNLIKE function ################
+    //functionnally a delete button
+    delBtn.addEventListener("click", async function (event) {
+      //prevent activating elements beneath button
+      event.stopImmediatePropagation();
+      //obtain imageID entry from the inital array
+      const delEntry = { id: element.id };
+      //send ID to /unlike which will remove the entry
+      const res = await fetch("http://localhost:3333/unlike", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(delEntry),
+      });
+      console.log("delete", delEntry);
+      //remove the element dynamically from page
+      thumbDiv.remove();
+    });
+    //######### end of unlike function
+    //############# THUMBNAIL function ###########
+    //click the thumbnail, make the image show on the main section of the screen
+    thumbImg.addEventListener("click", function () {
+      mainImg.style.backgroundImage = `url("${element.image_path}")`;
+      console.log(mainImg.style.backgroundImage);
+    });
+  });
+}
+
+getImgURL();
