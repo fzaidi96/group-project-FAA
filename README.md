@@ -10,10 +10,8 @@ Anne &
 Fatima
 
 **Project Description**
-We have created a Moodboard!
-Think Pinterest but better (that's a bit of a claim BUT you gotta big yourself up sometimes) 
-
-The platform allows users to explore and save images sourced from an open-source repository to their personalized moodboards. 
+We have created a MOODBOARD called FAA - our initials together. Think Pinterest but much better (that's a bit of a claim BUT you gotta big yourself up when you're learning) 
+Our platform allows users to explore and save images sourced from an open-source database (our good friend Unsplash) to their own personalized moodboards. You can search for whatever you like, and if you want to add it to your moodboard you simply press the heart button! You'll be messaged if you've already saved an image :) Then you can navigate to your own profile page and scroll through a gorgeous carousel of all your images! 
 
 
 **Problem Domain and User Stories**
