@@ -32,15 +32,44 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   //now close the popup and continue
   const closeButton = document.getElementById("closePopup");
-  closeButton.addEventListener("click", function () {
-    document.getElementById("overlay").style.display = "none";
-  });
+  if (
+    window.location.href.indexOf("userarea") > -1 ||
+    window.location.href.indexOf("about") > -1
+  ) {
+    console.log("dont fire", "showpopup");
+  } else {
+    console.log("fire", "showpopup");
+    closeButton.addEventListener("click", function () {
+      document.getElementById("overlay").style.display = "none";
+    });
+  }
 });
 
 function showPopup() {
-  document.getElementById("overlay").style.display = "flex";
+  if (
+    window.location.href.indexOf("userarea") > -1 ||
+    window.location.href.indexOf("about") > -1
+  ) {
+    console.log("dont fire", "showpopup");
+  } else {
+    console.log("fire", "showpopup");
+    document.getElementById("overlay").style.display = "flex";
+  }
 }
 
+//show add user form
+const addUserBtn = document.getElementById("add-user-btn");
+addUserBtn.addEventListener("click", function () {
+  document.getElementById("add-user-overlay").style.display = "flex";
+  console.log("click");
+});
+
+//close add user form
+const closeUserFormBtn = document.getElementById("close-user");
+closeUserFormBtn.addEventListener("click", function (event) {
+  event.stopImmediatePropagation;
+  document.getElementById("add-user-overlay").style.display = "none";
+});
 //above function feeds the 'data' field (an array of usernames) into the below function. The function then creates the options for the dropdown menu, with the value = users ID. This can be referenced later.
 
 async function popUserList() {
@@ -52,10 +81,10 @@ async function popUserList() {
   userDropDown.innerHTML = "";
 
   // Add a default option
-  // const defaultOption = document.createElement("option");
-  // defaultOption.textContent = "default";
-  // defaultOption.value = "0";
-  // userDropDown.appendChild(defaultOption);
+  const defaultOption = document.createElement("option");
+  defaultOption.textContent = "Select user";
+  defaultOption.value = "0";
+  userDropDown.appendChild(defaultOption);
 
   // Add each user as an option
   users.forEach(function (user) {
@@ -70,8 +99,15 @@ async function popUserList() {
 
   // Select the last option (newly added user)
   // userDropDown.selectedIndex = userDropDown.options.length - 1;
-
-  getImgURL();
+  if (
+    window.location.href.indexOf("userarea") > -1 ||
+    window.location.href.indexOf("about") > -1
+  ) {
+    console.log("dont fire", "popUserList");
+  } else {
+    console.log("fire", "popUserList");
+    getImgURL();
+  }
 }
 
 popUserList();
@@ -124,16 +160,32 @@ form.addEventListener("submit", async function (event) {
   getImages(userQuery);
 });
 
+//RNG
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 // make API call to unsplash to get images
 async function getImages(query) {
+  const ranPg = getRandomInt(1, 10);
   //fetch data from unsplash
   const response = await fetch(
-    `https://api.unsplash.com/search/photos?query=${query}&client_id=mGrCIgBZNFz0VK6M5r0Ku0ZuqH07Q3OfjhdbYqQWXwo`
+    `https://api.unsplash.com/search/photos?query=${query}&page=${ranPg}&per_page=30&client_id=mGrCIgBZNFz0VK6M5r0Ku0ZuqH07Q3OfjhdbYqQWXwo`
   );
   //turn response into JSON
   const json = await response.json();
   //call renderImages to show them on page
-  renderImages(json.results);
+  if (
+    window.location.href.indexOf("userarea") > -1 ||
+    window.location.href.indexOf("about") > -1
+  ) {
+    console.log("dont fire", "getimages");
+  } else {
+    console.log("fire", "getimages");
+    renderImages(json.results);
+  }
 }
 
 //use jsonified Unsplash data to display the images the user searched for on the page, with a like button
@@ -152,14 +204,18 @@ async function renderImages(data) {
     const addedTxt = document.createElement("p");
     addedTxt.textContent = "image added!";
     addedTxt.style.display = "none";
+    addedTxt.className = "like-txt";
+
     const alreadyAddedTxt = document.createElement("p");
     alreadyAddedTxt.textContent = "image already liked!";
     alreadyAddedTxt.style.display = "none";
+    alreadyAddedTxt.className = "like-txt";
     likeBtn.src = "./images/heart.png";
     likeBtn.alt = "like button";
     likeBtn.className = "like-button";
     img.src = unsplashImages.urls.regular; //these are properties of the object returned by unsplashImages
     img.alt = unsplashImages.alt_description;
+    img.className = "feed-img";
     //######### Like Button function #########
     likeBtn.addEventListener("click", async function (event) {
       event.stopImmediatePropagation();
@@ -187,12 +243,12 @@ async function renderImages(data) {
         }
       }
       if (match === true) {
-        alreadyAddedTxt.style.display = "block";
+        alreadyAddedTxt.style.display = "flex";
         setTimeout(() => {
           alreadyAddedTxt.style.display = "none";
         }, 1000);
       } else if (match === false) {
-        addedTxt.style.display = "block";
+        addedTxt.style.display = "flex";
         setTimeout(() => {
           addedTxt.style.display = "none";
         }, 1000);
@@ -258,6 +314,7 @@ async function getImgURL() {
     thumbImg.src = element.image_path;
     thumbImg.alt = element.alt_text;
     console.log(element);
+    thumbDiv.className = 'thumbdiv'
     thumbImg.className = "thumbnail-img";
     //assemble elements & append to thumbnail area
     thumbDiv.appendChild(thumbImg);
@@ -285,7 +342,7 @@ async function getImgURL() {
     //############# THUMBNAIL function ###########
     //click the thumbnail, make the image show on the main section of the screen
     thumbImg.addEventListener("click", function () {
-      mainImg.style.backgroundImage = `url("${element.image_path}")`;
+      mainImg.src = element.image_path;
       console.log(mainImg.style.backgroundImage);
     });
   });
