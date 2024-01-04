@@ -6,10 +6,9 @@ userDropDown.addEventListener("change", function () {
   selectedUserId = userDropDown.value;
   console.log(
     "Selected User ID:",
-    userDropDown.options[
-      ((selectedUserId, userDropDown.selectedIndex))
-    ],
-    userDropDown.value);
+    userDropDown.options[(selectedUserId, userDropDown.selectedIndex)],
+    userDropDown.value
+  );
   getImgURL();
 });
 window.onload = function () {
@@ -58,7 +57,7 @@ async function popUserList() {
 
   getImgURL();
 }
-// ############# Add user function and automatically populate user list###########
+// ############# ADD USER function and automatically populate user list###########
 const userForm = document.getElementById("addUser");
 userForm.addEventListener("submit", async function (event) {
   event.preventDefault();
@@ -93,6 +92,7 @@ userForm.addEventListener("submit", async function (event) {
       alert("User already exists!");
     }
   }
+  userDropDown.selectedIndex = userDropDown.options.length - 1;
 });
 
 //when user clicks submit, the function calls the getImages() function with the search term (passed through function as userQuery). Then getImages makes an fetch call
@@ -168,16 +168,17 @@ async function renderImages(data) {
         alreadyAddedTxt.style.display = "block";
         setTimeout(() => {
           alreadyAddedTxt.style.display = "none";
-        }, 100);
+        }, 1000);
       } else if (match === false) {
         addedTxt.style.display = "block";
         setTimeout(() => {
           addedTxt.style.display = "none";
-        }, 500);
+        }, 1000);
       }
       const newEntry = {
         id: selectedUserId,
         imagePath: unsplashImages.urls.regular,
+        altTxt: unsplashImages.alt_description,
       };
       console.log("save image to userID:", selectedUserId);
       await fetch("http://localhost:3333/liked", {
@@ -233,7 +234,8 @@ async function getImgURL() {
     delBtn.textContent = "unlike";
     delBtn.className = "del-btn";
     thumbImg.src = element.image_path;
-    thumbImg.alt = element.image_path;
+    thumbImg.alt = element.alt_text;
+    console.log(element);
     thumbImg.className = "thumbnail-img";
     //assemble elements & append to thumbnail area
     thumbDiv.appendChild(thumbImg);
