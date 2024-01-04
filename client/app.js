@@ -44,7 +44,7 @@ function showPopup() {
 //above function feeds the 'data' field (an array of usernames) into the below function. The function then creates the options for the dropdown menu, with the value = users ID. This can be referenced later.
 
 async function popUserList() {
-  const response = await fetch("https://moody-faa.onrender.com//users");
+  const response = await fetch("https://moody-faa.onrender.com/users");
   const users = await response.json();
   const userDropDown = document.getElementById("userDropdown");
 
@@ -84,7 +84,7 @@ userForm.addEventListener("submit", async function (event) {
   const formVal = Object.fromEntries(formData);
   //in try function for error handling
   try {
-    const response = await fetch("https://moody-faa.onrender.com//users", {
+    const response = await fetch("https://moody-faa.onrender.com/users", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(formVal),
@@ -169,7 +169,7 @@ async function renderImages(data) {
         id: selectedUserId,
       };
       const response = await fetch(
-        "https://moody-faa.onrender.com//userImages",
+        "https://moody-faa.onrender.com/userImages",
         {
           method: "POST",
           headers: { "content-type": "application/json" },
@@ -203,7 +203,7 @@ async function renderImages(data) {
         altTxt: unsplashImages.alt_description,
       };
       console.log("save image to userID:", selectedUserId);
-      await fetch("https://moody-faa.onrender.com//liked", {
+      await fetch("https://moody-faa.onrender.com/liked", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(newEntry),
@@ -229,7 +229,7 @@ async function getImgURL() {
   //get userID from userDropdownValue
   const CurrentUserId = { id: selectedUserId };
   //post request (userID) to /userImages
-  const response = await fetch("https://moody-faa.onrender.com//userImages", {
+  const response = await fetch("https://moody-faa.onrender.com/userImages", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(CurrentUserId),
@@ -272,7 +272,7 @@ async function getImgURL() {
       //obtain imageID entry from the inital array
       const delEntry = { id: element.id };
       //send ID to /unlike which will remove the entry
-      const res = await fetch("https://moody-faa.onrender.com//unlike", {
+      const res = await fetch("https://moody-faa.onrender.com/unlike", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(delEntry),
