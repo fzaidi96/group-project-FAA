@@ -26,12 +26,13 @@ The user has to be 'logged in' in order to interact with the site and begin savi
 
 
 
-**Inital Planning**
+**Planning**
 Our brainstorming documents and wireframes can be found at the following link: https://www.figma.com/files/project/180553372?fuid=1323944808115524491
 We started our project in a FigmaJam board for brainstorming. At this stage, we defined our MVP as well as identifying stretch goals and we began my compiling bits of inspiration including snippets of code or screenshots of competitor web applications.
 After brainstorming, we drew low-fidelity wireframes collaboratively in Figma. 
 
-
+**Project Space**
+https://www.figma.com/files/project/180553372/Team-project?fuid=1323944808115524491
 
 **Final Presentation**
 https://www.figma.com/file/rjynw3MHTh5oZtvkDexWZq/Presentation?type=whiteboard&node-id=0-1&t=lKrRLFkLo7N4n02U-0
