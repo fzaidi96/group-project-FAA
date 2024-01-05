@@ -236,12 +236,15 @@ footer {
   font-size: 1rem;
   font-weight: 600;
   border: 1px solid #012880;
-  background-image: linear-gradient(-180deg, #FF89D6 0%, #C01F9E 100%);
-  box-shadow: 0 1rem 1.25rem 0 rgba(22,75,195,0.50), 0 -0.25rem 1.5rem rgba(110, 15, 155, 1) inset, 0 0.75rem 0.5rem rgba(255,255,255, 0.4) inset, 0 0.25rem 0.5rem 0 rgba(180, 70, 207, 1) inset;
+  background-image: linear-gradient(-180deg, #ff89d6 0%, #c01f9e 100%);
+  box-shadow: 0 1rem 1.25rem 0 rgba(22, 75, 195, 0.5),
+    0 -0.25rem 1.5rem rgba(110, 15, 155, 1) inset,
+    0 0.75rem 0.5rem rgba(255, 255, 255, 0.4) inset,
+    0 0.25rem 0.5rem 0 rgba(180, 70, 207, 1) inset;
 }
 .Home span {
   color: transparent;
-  background-image: linear-gradient(0deg, #EE82DA 0%, #FEFAFD 100%);
+  background-image: linear-gradient(0deg, #ee82da 0%, #fefafd 100%);
   -webkit-background-clip: text;
   background-clip: text;
   filter: drop-shadow(0 2px 2px hsla(290, 100%, 20%, 1));
@@ -260,17 +263,19 @@ footer {
   border-radius: 100%;
 
   opacity: 0.7;
-  background-image: linear-gradient(-270deg, rgba(255,255,255,0.00) 0%, #FFFFFF 20%, #FFFFFF 80%, rgba(255,255,255,0.00) 100%);
+  background-image: linear-gradient(
+    -270deg,
+    rgba(255, 255, 255, 0) 0%,
+    #ffffff 20%,
+    #ffffff 80%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 .Home:hover {
   transition-delay: 0s, 1s;
   color: #fff;
-  box-shadow:
-      0 0 10px #0ef,
-      0 0 20px #0ef,
-      0 0 40px #0ef,
-      0 0 80px #0ef,
-      0 0 160px #0ef;
+  box-shadow: 0 0 10px #0ef, 0 0 20px #0ef, 0 0 40px #0ef, 0 0 80px #0ef,
+    0 0 160px #0ef;
 }
 
 @media (min-width: 600px) {
@@ -311,10 +316,11 @@ footer {
   .thumbnail-container {
     background-color: rgba(0, 0, 0, 0.416);
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     width: 20%;
     height: calc(100vh - 120px);
     overflow: scroll;
+    align-items: center;
   }
   main {
     display: flex;
@@ -330,5 +336,10 @@ footer {
   #mainImage {
     height: 100%;
     max-height: calc(100vh - 120px);
+  }
+
+  .thumbdiv:hover {
+    cursor: pointer;
+    transform: scale(1.1);
   }
 }

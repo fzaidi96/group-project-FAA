@@ -23,7 +23,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Username is selected, proceed with the initialization
     popUserList();
     selectedUserId = userDropDown.value;
-
   }
   //now close the popup and continue
   const closeButton = document.getElementById("closePopup");
@@ -94,7 +93,6 @@ async function popUserList() {
     window.location.href.indexOf("about") > -1
   ) {
   } else {
-
     getImgURL();
   }
 }
@@ -137,6 +135,7 @@ userForm.addEventListener("submit", async function (event) {
     }
   }
   userDropDown.selectedIndex = userDropDown.options.length - 1;
+  document.getElementById("add-user-overlay").style.display = "none";
 });
 
 //when user clicks submit, the function calls the getImages() function with the search term (passed through function as userQuery). Then getImages makes an fetch call
@@ -286,7 +285,7 @@ async function getImgURL() {
   //clear previous images
   thumBar.innerHTML = "";
   //for each element within the array -> create a new div containing an image and a unlike button
-  mainImg.src = imgArr[imgArr.length - 1].image_path;
+  mainImg.src = imgArr[0].image_path;
   imgArr.forEach((element) => {
     //create elements
     const thumbImg = document.createElement("img");
