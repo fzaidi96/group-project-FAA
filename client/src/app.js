@@ -81,10 +81,10 @@ async function popUserList() {
   userDropDown.innerHTML = "";
 
   // Add a default option
-  const defaultOption = document.createElement("option");
-  defaultOption.textContent = "Select user";
-  defaultOption.value = "0";
-  userDropDown.appendChild(defaultOption);
+  // const defaultOption = document.createElement("option");
+  // defaultOption.textContent = "Select user";
+  // defaultOption.value = "0";
+  // userDropDown.appendChild(defaultOption);
 
   // Add each user as an option
   users.forEach(function (user) {
@@ -303,6 +303,7 @@ async function getImgURL() {
   //clear previous images
   thumBar.innerHTML = "";
   //for each element within the array -> create a new div containing an image and a unlike button
+  mainImg.src = imgArr[imgArr.length - 1].image_path;
   imgArr.forEach((element) => {
     //create elements
     const thumbImg = document.createElement("img");
@@ -314,7 +315,7 @@ async function getImgURL() {
     thumbImg.src = element.image_path;
     thumbImg.alt = element.alt_text;
     console.log(element);
-    thumbDiv.className = 'thumbdiv'
+    thumbDiv.className = "thumbdiv";
     thumbImg.className = "thumbnail-img";
     //assemble elements & append to thumbnail area
     thumbDiv.appendChild(thumbImg);
