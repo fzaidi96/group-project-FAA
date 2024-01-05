@@ -4,11 +4,7 @@ const userDropDown = document.getElementById("userDropdown");
 let selectedUserId;
 userDropDown.addEventListener("change", function () {
   selectedUserId = userDropDown.value;
-  console.log(
-    "Selected User ID:",
-    userDropDown.options[(selectedUserId, userDropDown.selectedIndex)],
-    userDropDown.value
-  );
+
   getImgURL();
 });
 //DELETE IF WORKING
@@ -27,8 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Username is selected, proceed with the initialization
     popUserList();
     selectedUserId = userDropDown.value;
-    console.log(userDropDown.value);
-    console.log("Initially Selected User ID:", selectedUserId);
+
   }
   //now close the popup and continue
   const closeButton = document.getElementById("closePopup");
@@ -36,9 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.location.href.indexOf("userarea") > -1 ||
     window.location.href.indexOf("about") > -1
   ) {
-    console.log("dont fire", "showpopup");
   } else {
-    console.log("fire", "showpopup");
     closeButton.addEventListener("click", function () {
       document.getElementById("overlay").style.display = "none";
     });
@@ -50,9 +43,7 @@ function showPopup() {
     window.location.href.indexOf("userarea") > -1 ||
     window.location.href.indexOf("about") > -1
   ) {
-    console.log("dont fire", "showpopup");
   } else {
-    console.log("fire", "showpopup");
     document.getElementById("overlay").style.display = "flex";
   }
 }
@@ -61,7 +52,6 @@ function showPopup() {
 const addUserBtn = document.getElementById("add-user-btn");
 addUserBtn.addEventListener("click", function () {
   document.getElementById("add-user-overlay").style.display = "flex";
-  console.log("click");
 });
 
 //close add user form
@@ -103,9 +93,8 @@ async function popUserList() {
     window.location.href.indexOf("userarea") > -1 ||
     window.location.href.indexOf("about") > -1
   ) {
-    console.log("dont fire", "popUserList");
   } else {
-    console.log("fire", "popUserList");
+
     getImgURL();
   }
 }
@@ -155,7 +144,7 @@ const form = document.getElementById("searchForm");
 form.addEventListener("submit", async function (event) {
   event.preventDefault();
   const userQuery = event.target.query.value;
-  console.log(userQuery);
+
   //make API call with the user's query
   getImages(userQuery);
 });
@@ -181,9 +170,7 @@ async function getImages(query) {
     window.location.href.indexOf("userarea") > -1 ||
     window.location.href.indexOf("about") > -1
   ) {
-    console.log("dont fire", "getimages");
   } else {
-    console.log("fire", "getimages");
     renderImages(json.results);
   }
 }
@@ -219,7 +206,6 @@ async function renderImages(data) {
     //######### Like Button function #########
     likeBtn.addEventListener("click", async function (event) {
       event.stopImmediatePropagation();
-      console.log(unsplashImages.urls.regular);
 
       const queryImg = {
         id: selectedUserId,
@@ -238,7 +224,6 @@ async function renderImages(data) {
         const ele = imgArr[i].image_path;
         const img = unsplashImages.urls.regular;
         if (ele == img) {
-          console.log("match", i);
           match = true;
         }
       }
@@ -258,7 +243,6 @@ async function renderImages(data) {
         imagePath: unsplashImages.urls.regular,
         altTxt: unsplashImages.alt_description,
       };
-      console.log("save image to userID:", selectedUserId);
       await fetch("https://moody-faa.onrender.com/liked", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -297,7 +281,6 @@ async function getImgURL() {
   }
   //reteive an array containing imageID and imageURL
   const imgArr = await response.json();
-  console.log("image array", imgArr);
   //select the thumbnail container (can be out of function)
   const thumbContainer = document.getElementById("thumbnails");
   //clear previous images
@@ -314,7 +297,6 @@ async function getImgURL() {
     delBtn.className = "del-btn";
     thumbImg.src = element.image_path;
     thumbImg.alt = element.alt_text;
-    console.log(element);
     thumbDiv.className = "thumbdiv";
     thumbImg.className = "thumbnail-img";
     //assemble elements & append to thumbnail area
@@ -335,7 +317,6 @@ async function getImgURL() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(delEntry),
       });
-      console.log("delete", delEntry);
       //remove the element dynamically from page
       thumbDiv.remove();
     });
@@ -344,7 +325,6 @@ async function getImgURL() {
     //click the thumbnail, make the image show on the main section of the screen
     thumbImg.addEventListener("click", function () {
       mainImg.src = element.image_path;
-      console.log(mainImg.style.backgroundImage);
     });
   });
 }
